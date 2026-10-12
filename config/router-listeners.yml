@@ -1,0 +1,16 @@
+# PARTIAL CONFIGURATION: merge into generated router configuration.
+# Retain v, identity, edge/CSR, link, dialers, and other generated sections.
+ctrl:
+  endpoint: tls:ctrl.internal.example.com:6262
+listeners:
+  - binding: edge
+    address: tls:0.0.0.0:3022
+    options:
+      advertise: router.example.com:3022
+  # Optional: requires the router's administrative tunneler-enabled flag,
+  # plus Bind policy for its associated tunneler identity.
+  - binding: tunnel
+    options:
+      mode: host
+# No subnet forwarding or client-side transparent gateway is configured here.
+# Preserve needed mesh-link configuration from the generated base.

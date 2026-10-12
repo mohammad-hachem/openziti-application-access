@@ -1,0 +1,14 @@
+{
+  "protocols": [
+    "tcp"
+  ],
+  "addresses": [
+    "portal.internal.example.com"
+  ],
+  "portRanges": [
+    {
+      "low": 443,
+      "high": 443
+    }
+  ]
+}

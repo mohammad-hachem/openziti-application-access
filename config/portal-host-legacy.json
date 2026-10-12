@@ -1,0 +1,5 @@
+{
+  "protocol": "tcp",
+  "address": "192.0.2.50",
+  "port": 8443
+}

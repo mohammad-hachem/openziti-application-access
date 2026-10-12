@@ -1,0 +1,31 @@
+# PARTIAL CONFIGURATION: merge into a version-matched generated controller.
+# Retain identity/PKI, db or cluster, enrollment signer, and required auth bindings.
+# 192.0.2.10 represents an assigned PRIVATE management-interface address here.
+ctrl:
+  listener: tls:0.0.0.0:6262
+# Merge api into existing edge; do not replace edge.enrollment.
+edge:
+  api:
+    address: ziti.example.com:1280
+web:
+  - name: client-api
+    bindPoints:
+      - interface: 0.0.0.0:1280
+        address: ziti.example.com:1280
+    apis:
+      - binding: edge-client
+  - name: private-administration
+    bindPoints:
+      - interface: 192.0.2.10:8443
+        address: admin.example.com:8443
+    apis:
+      - binding: edge-management
+      - binding: fabric
+      - binding: zac
+        options:
+          location: /opt/openziti/share/console
+          indexFile: index.html
+# Use certificate SANs covering advertised names, and appropriate listener
+# identities where needed. The ZAC directory must exist for the installed package.
+# Restrict 6262 to required router/controller sources and 8443 to administrators.
+# Preserve/add the auth endpoints required by the selected release and auth mode.
