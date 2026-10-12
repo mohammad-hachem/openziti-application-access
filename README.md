@@ -1,5 +1,7 @@
 # OpenZiti: Private Application Access with User and Machine Identities
 
+[![CI](https://github.com/mohammad-hachem/openziti-application-access/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammad-hachem/openziti-application-access/actions/workflows/ci.yml)
+
 I implemented and tested OpenZiti to give users access to specific applications without granting a general route into the internal network. The work included the controller, administration console, edge router, application hosting, role-based access, and a provisioning script that generated enrollment JWTs and QR codes for phone clients.
 
 Several details needed attention beyond getting the first connection working: separating administrative access from client access, choosing where the hosting tunneler runs, making role assignments predictable, and getting enrollment onto a phone without awkward file handling.
@@ -111,3 +113,25 @@ python3 -m unittest discover -s tests -v
 - I treat the management API boundary as seriously as the console login page.
 - I keep the original identity and service IDs when building readable reports; friendly names are an extra layer.
 - I use application-level checks alongside router and terminator status. An online component is useful evidence, but it is not the user's result.
+
+## Production hardening roadmap
+
+My next priorities for taking this design beyond the combined test host are below. These are planned extensions, not claims about features enabled in the documented deployment.
+
+| Priority | Extension | Acceptance check |
+|---|---|---|
+| 1 | HA controllers and redundant edge routers across independent failure domains, using the chosen release's supported architecture | Lose a controller or router deliberately; verify new connections, existing-session behavior and recovery |
+| 2 | External identity provider integration, such as Keycloak, using supported external JWT/OIDC flows | Verify issuer, audience, signing keys and identity mapping; reject invalid tokens and test account disablement |
+| 3 | MFA for human access, with separate policies for noninteractive machine identities | Verify challenge, expiry, recovery and denial behavior on each supported desktop/mobile client |
+| 4 | Posture checks attached to application service policies | Test allowed and noncompliant devices, stale posture responses and client compatibility |
+| 5 | Operational recovery and lifecycle controls | Restore controller state/PKI in isolation; test certificate renewal, offboarding and application access monitoring |
+
+IdP authentication establishes who is signing in; service policies still determine what that identity can access. IdP MFA and OpenZiti MFA/posture enforcement must be tested as an end-to-end flow rather than assumed equivalent. Keep a protected administrative recovery path.
+
+Implementation references: [HA architecture](https://blog.openziti.io/announcing-openziti-v2-0), [authentication](https://netfoundry.io/docs/openziti/maint/learn/core-concepts/security/authentication/auth/), and [OIDC posture checks](https://netfoundry.io/docs/openziti/maint/learn/core-concepts/security/authorization/posture-checks/oidc-posture/). Select documentation matching the deployed release; the implementation described here originated in 1.6.x.
+
+## CI and license
+
+GitHub Actions runs the offline Python unit tests and ShellCheck on every push and pull request. It uses synthetic enrollment material and does not contact a live controller or send email. The badge above reports the actual workflow status.
+
+Code and documentation are available under the [MIT License](LICENSE).
