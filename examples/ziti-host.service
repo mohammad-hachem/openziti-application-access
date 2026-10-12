@@ -1,0 +1,18 @@
+# Adapt binary path and account to the installed package. Hosting only.
+[Unit]
+Description=OpenZiti application hosting tunneler
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=ziti-host
+Group=ziti-host
+UMask=0077
+ExecStart=/usr/bin/ziti-edge-tunnel run-host --identity-dir /etc/ziti/identities
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

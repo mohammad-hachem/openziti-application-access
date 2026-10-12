@@ -1,0 +1,13 @@
+# Partial fragment. Merge with existing events; verify against your version.
+# Create the directory with the controller service account as owner.
+events:
+  operations:
+    subscriptions:
+      - type: connect
+      - type: circuit
+      - type: router
+      - type: terminator
+    handler:
+      type: file
+      format: json
+      path: /var/log/ziti-controller/events.log

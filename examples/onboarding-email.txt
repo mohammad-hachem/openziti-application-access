@@ -1,0 +1,18 @@
+To: sam@example.com
+From: access@example.com
+Subject: Application access enrollment: sam-laptop
+Attachments: identity.jwt, enrollment.png (generated privately; not included here)
+
+Your device identity is sam-laptop.
+
+Import the JWT with your OpenZiti client, or use its supported QR import.
+The two attachments represent the same one-time enrollment. Use it on one
+device, keep it private, and do not forward it.
+
+Your assigned applications:
+- Employee portal: https://portal.internal.example.com
+- Reporting portal: https://reports.internal.example.com
+
+Connect the client after enrollment and test both applications. Application
+login is still required. If a link fails, report the application name and
+error to your administrator without including credentials or token contents.

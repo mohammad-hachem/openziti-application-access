@@ -1,0 +1,5 @@
+{
+  "portal-users": {"service": "portal", "label": "Employee portal", "url": "https://portal.internal.example.com"},
+  "reports-users": {"service": "reports", "label": "Reporting portal", "url": "https://reports.internal.example.com"},
+  "hosting-users": {"service": "hosting-console", "label": "Hosting console", "url": "https://hosting.internal.example.com"}
+}

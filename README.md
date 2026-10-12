@@ -6,7 +6,7 @@ Several details needed attention beyond getting the first connection working: se
 
 This repository explains those decisions with fictional names and reconstructed examples. It contains no production identities, enrollment tokens, private keys, internal addresses, or employer configurations.
 
-**Start here:** [Implementation guide](IMPLEMENTATION.md) · [Provisioning script](scripts/create-user.sh) · [Configuration examples](config/)
+**Start here:** [Implementation guide](IMPLEMENTATION.md) · [Troubleshooting from the deployment](docs/TROUBLESHOOTING.md) · [Onboarding workflow](docs/ONBOARDING.md)
 
 ## Why I chose application access over broad network access
 
@@ -68,14 +68,46 @@ flowchart TB
 
 The paths are alternatives for a service. The legacy gateway can be a separate host or a function on the router machine. The diagram shows logical roles, not the original deployment.
 
-## Files
+## What made the deployment more than an installation
 
-- [IMPLEMENTATION.md](IMPLEMENTATION.md): listeners, router setup, services, policies, enrollment, troubleshooting, and production considerations.
-- [config/controller-listeners.yml](config/controller-listeners.yml): partial controller example separating client APIs from management.
-- [config/router-listeners.yml](config/router-listeners.yml): partial router example for edge connectivity and optional service hosting.
-- [config/portal-intercept.json](config/portal-intercept.json): one client-visible application.
-- [config/portal-host.json](config/portal-host.json): application-hosted backend.
-- [config/portal-host-legacy.json](config/portal-host-legacy.json): alternative gateway backend.
-- [scripts/create-user.sh](scripts/create-user.sh): recreated role-scoped identity and QR provisioning, dry-run by default.
+Getting an identity enrolled was only the beginning. I confirmed that the enrollment email and its attachments reached the recipient during testing, but also encountered an enrolled laptop that could not resolve an application name. I checked Bind permissions and common routers with the policy advisor, inspected application terminators, and enabled controller event logging. Those checks helped separate delivery, identity, policy, hosting and application problems.
 
-The implementation history comes from the 1.6.x era. These files illustrate the configuration decisions; start with configuration generated for your supported release and merge the relevant sections. They are not a complete PKI bootstrap or an HA deployment. The public script is a reconstruction, not the original private script.
+The provisioning workflow also needed readable application names. When I extended discovery, service IDs appeared in the output and an application was missing. The public helper uses an explicit application catalog while the onboarding guide explains what reliable dynamic discovery must resolve.
+
+## Read the repository
+
+| Guide or example | What it covers |
+|---|---|
+| [Implementation](IMPLEMENTATION.md) | Controller, console, router, hosting, policies and enrollment commands |
+| [Multiple applications](docs/APPLICATIONS.md) | Three application roles, service creation and Dial/Bind separation |
+| [Onboarding](docs/ONBOARDING.md) | Device identities, QR/JWT delivery, application links and offboarding |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Actual symptoms, changes and limits of the observed results |
+| [Operations](docs/OPERATIONS.md) | Administrative exposure, persistent hosting, events and identity lifecycle |
+| [Validation](docs/VALIDATION.md) | Observed results and a deployment acceptance worksheet |
+| [Configuration fragments](config/) | Controller/router listeners, event logging and service configurations |
+| [Provisioning entry point](scripts/create-user.sh) | Multiple roles, private enrollment bundle and optional email draft |
+| [Hosting service](examples/ziti-host.service) | Example systemd unit for a directory of hosting identities |
+| [Script tests](tests/test_provision_user.py) | Offline tests using fake CLI tools and synthetic credentials |
+
+The implementation history comes from the 1.6.x era. Start with configuration generated for your supported release and merge the relevant fragments. The public scripts are reconstructions using fictional application names; they contain no original enrollment credentials.
+
+Preview onboarding without contacting a controller:
+
+```bash
+bash scripts/create-user.sh sam-laptop portal-users,reports-users \
+  --recipient sam@example.com --sender access@example.com
+```
+
+Run the offline helper tests:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+## What I'd tell someone starting this
+
+- My advice is to start with one application and a separate identity for each device, then expand the role model once the whole path is understandable.
+- I learned to separate successful enrollment from successful application access. I check both.
+- I treat the management API boundary as seriously as the console login page.
+- I keep the original identity and service IDs when building readable reports; friendly names are an extra layer.
+- I use application-level checks alongside router and terminator status. An online component is useful evidence, but it is not the user's result.

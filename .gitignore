@@ -7,3 +7,9 @@ enrollment-bundles/
 *.db
 *-identity.json
 enrollment-bundle-*/
+
+
+__pycache__/
+*.pyc
+enrollment-bundle-*/
+*.eml

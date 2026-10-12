@@ -196,7 +196,7 @@ Reference: [OpenZiti policies](https://netfoundry.io/docs/openziti/active/learn/
 
 My Bash workflow generated an identity, its enrollment JWT, and a QR image. The JWT and image were sent to users, giving phone users another way to import enrollment material.
 
-The recreated [create-user.sh](scripts/create-user.sh) accepts an identity name and approved application role, then creates a private enrollment bundle. It defaults to dry-run:
+The recreated [create-user.sh](scripts/create-user.sh) accepts an identity name and one or more comma-separated application roles, then creates a private enrollment bundle with an optional MIME email draft. It defaults to dry-run:
 
 ```bash
 bash scripts/create-user.sh alex-phone portal-users
@@ -218,6 +218,8 @@ On a phone, use the OpenZiti client application's supported enrollment/import fl
 Use a separate identity for each device. After enrollment, the client holds its own identity credentials; the one-time enrollment JWT is not the credential used for each application connection. Expired or consumed enrollment material must be replaced through the supported enrollment process.
 
 References: [Creating identities](https://netfoundry.io/docs/openziti/learn/core-concepts/identities/creating/), [enrollment](https://netfoundry.io/docs/openziti/learn/core-concepts/security/enrollment/), and [client enrollment](https://netfoundry.io/docs/openziti/learn/core-concepts/identities/enrolling/).
+
+See [the complete onboarding workflow](docs/ONBOARDING.md) for multiple roles, email drafts and delivery checks, and [the multi-application recipe](docs/APPLICATIONS.md) for the matching service policies.
 
 ## 9. The role-discovery problem I encountered
 
@@ -257,6 +259,8 @@ I also enabled controller event logging and observed connection events containin
 
 For a new rollout, include negative tests: a user without the role cannot access the service; an authorized user cannot access an unrelated service or backend port; ordinary clients cannot reach the management endpoints. Test policy removal using new connections and observe existing-session behavior rather than assuming immediate termination.
 
+The [troubleshooting account](docs/TROUBLESHOOTING.md) expands the observed incidents. [Operations](docs/OPERATIONS.md) includes the persistent hosting unit and event logging examples. Use the [validation worksheet](docs/VALIDATION.md) to record end-to-end and negative-access results.
+
 ## 11. Moving beyond the combined test host
 
 - Separate the controller from router/data-plane exposure and protect administrative access.
@@ -269,3 +273,4 @@ For a new rollout, include negative tests: a user without the role cannot access
 - Keep a recovery path for management access that does not depend solely on the service being repaired.
 
 The implementation gave me application-specific access and a repeatable enrollment workflow. The details that made it usable were listener separation, correct advertised addresses, an appropriate hosting location, understandable roles, and phone-friendly enrollment.
+
